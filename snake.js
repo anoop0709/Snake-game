@@ -30,31 +30,54 @@ window.onload = function(){
     
     placefood();
     document.addEventListener('keyup',changeDirection);
-    setInterval(update,3000/10);
+    setInterval(update,2000/10);
 }
 
 function update(){
+
+
     if(gameOver){
         return;
     }
+
     context.fillStyle = "black";
     context.fillRect(0, 0, board.width, board.height);
 
     context.fillStyle = "red";
     context.fillRect(foodX, foodY, blockSize,blockSize);
+
     if(snakeX == foodX && snakeY == foodY){
         snakeBody.push(foodX,foodY);
         placefood();
     }
-    if(snakeX < 0 || snakeX > board.width || snakeY < 0 || snakeY > board.height){
-        gameOver = true;
-        alert("Game Over");
+    
+    for(let i = snakeBody.length-1;i > 0; i--){
+        snakeBody[i] = snakeBody[i-1];
+    }
+
+    if(snakeBody.length){
+        snakeBody[0] = [snakeX,snakeY];
     }
 
     context.fillStyle = "blue";
     snakeX += velocityX * blockSize;
     snakeY += velocityY * blockSize;
     context.fillRect(snakeX, snakeY, blockSize, blockSize);
+    for(let i = 0; i < snakeBody.length; i++){
+        context.fillRect(snakeBody[i][0], snakeBody[i][1], blockSize, blockSize);
+    }
+
+    if(snakeX < 0 || snakeX > board.width || snakeY < 0 || snakeY > board.height){
+        gameOver = true;
+       alert("Game Over");
+    }
+    
+    for(let i = 0; i < snakeBody.length; i++){
+        if(snakeX == snakeBody[i][0] && snakeY == snakeBody[i][1]){
+            gameOver = 0;
+            alert("Game Over");
+        }
+    }
 }
 
 function placefood(){
@@ -63,19 +86,19 @@ function placefood(){
 }
 
 function changeDirection(e){
-    if(e.code == 'ArrowUp' && velocityY!= 1){
+    if(e.code == 'ArrowUp' && velocityY != 1){
         velocityX = 0;
         velocityY = -1;
      }
-     else if(e.code == 'ArrowDown' && velocityY!= -1){
+     else if(e.code == 'ArrowDown' && velocityY != -1){
         velocityX = 0;
         velocityY = 1;
      }
-     else if(e.code == 'ArrowLeft' && velocityX!= 1){
+     else if(e.code == 'ArrowLeft' && velocityX != 1){
         velocityX = -1;
         velocityY = 0;
      }
-     else if(e.code == 'ArrowRight' && velocityX!= -1){
+     else if(e.code == 'ArrowRight' && velocityX != -1){
         velocityX = 1;
         velocityY = 0;
      }
